@@ -1,0 +1,10 @@
+<svg width="160" height="48" viewBox="0 0 160 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Icon - Mathematical Symbol with Sports -->
+  <rect x="8" y="8" width="32" height="32" rx="6" fill="#2563eb" stroke="#1e40af" stroke-width="1"/>
+  <path d="M16 20 L24 16 L32 20 L24 24 Z" fill="#ffffff"/>
+  <circle cx="24" cy="20" r="2" fill="#ff6b35"/>
+  
+  <!-- Company Name -->
+  <text x="48" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#1e293b">StatsBall</text>
+  <text x="48" y="34" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="500" fill="#64748b">Análise Matemática Esportiva</text>
+</svg>
