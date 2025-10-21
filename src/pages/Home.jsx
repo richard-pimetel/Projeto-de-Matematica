@@ -66,7 +66,7 @@ const Home = () => {
               <p className="text-2xl md:text-3xl font-extralight text-gray-600 dark:text-gray-400 mb-6 tracking-wide">
                 Sistema de Análise Matemática Esportiva
               </p>
-              <p className="text-lg font-light text-gray-500 dark:text-gray-500 mb-20 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg font-light text-gray-500 dark:text-gray-400 mb-20 max-w-3xl mx-auto leading-relaxed">
                 Plataforma profissional para demonstração de metodologias estatísticas aplicadas 
                 ao desempenho esportivo através de visualizações interativas e análises precisas.
               </p>

@@ -9,7 +9,7 @@ const Integrantes = () => {
       icon: Code,
       cor: "from-blue-500 to-blue-600",
       skills: ["React", "JavaScript", "Tailwind CSS", "Vite", "APIs"],
-      foto: "/img/richard.jpg"
+      foto: "/IMG/RICHARD.jpg"
     },
     {
       nome: "Gustavo", 
@@ -18,7 +18,7 @@ const Integrantes = () => {
       icon: Lightbulb,
       cor: "from-green-500 to-green-600",
       skills: ["Concepção", "Planejamento", "Análise", "Estratégia", "Visão"],
-      foto: "/img/gustavo.jpg"
+      foto: "/IMG/GUSTAVO ZUMBA.jpg"
     },
     {
       nome: "João",
@@ -27,7 +27,7 @@ const Integrantes = () => {
       icon: Users,
       cor: "from-purple-500 to-purple-600",
       skills: ["Suporte Técnico", "Testes", "Revisão", "Documentação", "QA"],
-      foto: "/img/joao.jpg"
+      foto: "/IMG/JAMAL.jpg"
     },
     {
       nome: "Kauan",
@@ -36,7 +36,7 @@ const Integrantes = () => {
       icon: Presentation,
       cor: "from-orange-500 to-orange-600", 
       skills: ["Apresentação", "Comunicação", "Demonstração", "Suporte", "Marketing"],
-      foto: "/img/kauan.jpg"
+      foto: "/IMG/Kauan.jpg"
     },
     {
       nome: "Vitor",
@@ -45,7 +45,7 @@ const Integrantes = () => {
       icon: Presentation,
       cor: "from-red-500 to-red-600",
       skills: ["Apresentação", "Demonstração", "Suporte", "Colaboração", "Comunicação"],
-      foto: "/img/vitor.jpg"
+      foto: "/IMG/VITOR.jpg"
     }
   ]
 

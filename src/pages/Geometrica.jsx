@@ -395,7 +395,7 @@ const Geometrica = () => {
                 <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
                   Selecione jogadores para analisar
                 </h3>
-                <p className="text-gray-500 dark:text-gray-500">
+                <p className="text-gray-500 dark:text-gray-400">
                   Escolha até 4 jogadores da lista para ver a análise de aproveitamento usando média geométrica.
                 </p>
               </div>

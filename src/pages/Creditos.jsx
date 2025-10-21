@@ -13,7 +13,7 @@ const Creditos = () => {
       icon: Code,
       cor: "from-blue-500 to-blue-600",
       skills: ["React", "JavaScript", "Tailwind CSS", "Vite", "APIs"],
-      foto: "/img/richard.jpg"
+      foto: "/img/RICHARD.jpg"
     },
     {
       nome: "Gustavo", 
@@ -58,7 +58,7 @@ const Creditos = () => {
       icon: Users,
       cor: "from-indigo-500 to-indigo-600",
       skills: ["Suporte Técnico", "Apresentação", "Resolução de Problemas", "Comunicação", "Demonstração"],
-      foto: "/img/gabriel.jpg"
+      foto: "/img/GABRIEL.jpg"
     }
   ]
 
@@ -73,56 +73,7 @@ const Creditos = () => {
     setTimeout(() => setSelectedIntegrante(null), 300); // Delay para animação
   };
 
-  const teamMembers = [
-    {
-      name: 'Ana Silva',
-      role: 'Desenvolvedora Frontend',
-      description: 'Especialista em React e UI/UX, responsável pela interface e experiência do usuário.',
-      avatar: '👩‍💻',
-      skills: ['React', 'JavaScript', 'Tailwind CSS', 'UI/UX Design'],
-      social: {
-        github: 'https://github.com/anasilva',
-        linkedin: 'https://linkedin.com/in/anasilva',
-        email: 'ana.silva@email.com'
-      }
-    },
-    {
-      name: 'Carlos Santos',
-      role: 'Matemático & Analista',
-      description: 'Doutor em Matemática, responsável pela validação dos cálculos e explicações teóricas.',
-      avatar: '👨‍🔬',
-      skills: ['Estatística', 'Análise de Dados', 'Matemática Aplicada', 'Python'],
-      social: {
-        github: 'https://github.com/carlossantos',
-        linkedin: 'https://linkedin.com/in/carlossantos',
-        email: 'carlos.santos@email.com'
-      }
-    },
-    {
-      name: 'Marina Costa',
-      role: 'Designer & Pesquisadora',
-      description: 'Designer gráfica e pesquisadora em educação, focada na pedagogia visual e acessibilidade.',
-      avatar: '👩‍🎨',
-      skills: ['Design Gráfico', 'Pesquisa UX', 'Pedagogia Digital', 'Figma'],
-      social: {
-        github: 'https://github.com/marinacosta',
-        linkedin: 'https://linkedin.com/in/marinacosta',
-        email: 'marina.costa@email.com'
-      }
-    },
-    {
-      name: 'Pedro Oliveira',
-      role: 'Desenvolvedor Full Stack',
-      description: 'Engenheiro de software especializado em APIs e integração de dados esportivos.',
-      avatar: '👨‍💻',
-      skills: ['Node.js', 'APIs REST', 'Database', 'DevOps'],
-      social: {
-        github: 'https://github.com/pedrooliveira',
-        linkedin: 'https://linkedin.com/in/pedrooliveira',
-        email: 'pedro.oliveira@email.com'
-      }
-    }
-  ]
+  
 
   const technologies = [
     {
