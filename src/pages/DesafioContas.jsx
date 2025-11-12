@@ -13,16 +13,43 @@ const DesafioContas = () => {
   const [rankings, setRankings] = useState([])
   const [feedback, setFeedback] = useState('')
   const [isCorrect, setIsCorrect] = useState(null)
+  const [difficultyLevel, setDifficultyLevel] = useState(1)
   
   const inputRef = useRef(null)
   const timerRef = useRef(null)
 
-  // Operações baseadas no conteúdo do site (médias matemáticas)
-  const operators = [
-    { symbol: '+', name: 'Soma', difficulty: 1 },
-    { symbol: '-', name: 'Subtração', difficulty: 1 },
-    { symbol: '×', name: 'Multiplicação', difficulty: 2 },
-    { symbol: '÷', name: 'Divisão', difficulty: 3 }
+  // Tipos de médias matemáticas com 3 níveis de dificuldade
+  const mediaTypes = [
+    { 
+      type: 'aritmetica', 
+      name: 'Média Aritmética',
+      symbol: 'MA',
+      description: 'Soma dos valores dividida pela quantidade'
+    },
+    { 
+      type: 'geometrica', 
+      name: 'Média Geométrica',
+      symbol: 'MG',
+      description: 'Raiz n-ésima do produto dos valores'
+    },
+    { 
+      type: 'harmonica', 
+      name: 'Média Harmônica',
+      symbol: 'MH',
+      description: 'Inverso da média aritmética dos inversos'
+    },
+    { 
+      type: 'ponderada', 
+      name: 'Média Ponderada',
+      symbol: 'MP',
+      description: 'Média com pesos diferentes para cada valor'
+    }
+  ]
+
+  const difficultyLevels = [
+    { level: 1, name: 'Fácil', color: 'green', timeBonus: 1 },
+    { level: 2, name: 'Médio', color: 'yellow', timeBonus: 2 },
+    { level: 3, name: 'Difícil', color: 'red', timeBonus: 3 }
   ]
 
   // Carregar rankings do localStorage
@@ -52,49 +79,91 @@ const DesafioContas = () => {
     }
   }, [currentQuestion, gameState])
 
-  // Gerar nova pergunta HARDCORE - muito mais difícil
+  // Gerar nova pergunta sobre MÉDIAS MATEMÁTICAS com níveis de dificuldade
   const generateQuestion = () => {
-    const operator = operators[Math.floor(Math.random() * operators.length)]
-    let num1, num2, correctAnswer
+    const mediaType = mediaTypes[Math.floor(Math.random() * mediaTypes.length)]
+    let values, weights, correctAnswer, questionText, explanation
 
-    switch (operator.symbol) {
-      case '+':
-        // Soma HARDCORE: números grandes de 100 a 999
-        num1 = Math.floor(Math.random() * 900) + 100
-        num2 = Math.floor(Math.random() * 900) + 100
-        correctAnswer = num1 + num2
-        break
-      case '-':
-        // Subtração HARDCORE: números grandes, resultado pode ser negativo
-        num1 = Math.floor(Math.random() * 800) + 200
-        num2 = Math.floor(Math.random() * 600) + 100
-        correctAnswer = num1 - num2
-        break
-      case '×':
-        // Multiplicação HARDCORE: números de 15 a 99
-        num1 = Math.floor(Math.random() * 85) + 15
-        num2 = Math.floor(Math.random() * 85) + 15
-        correctAnswer = num1 * num2
-        break
-      case '÷':
-        // Divisão HARDCORE: resultados com decimais ou grandes
-        correctAnswer = Math.floor(Math.random() * 150) + 10
-        num2 = Math.floor(Math.random() * 25) + 5
-        num1 = correctAnswer * num2
-        // Às vezes fazer divisão com resultado decimal
-        if (Math.random() > 0.7) {
-          num1 = Math.floor(Math.random() * 2000) + 100
-          num2 = Math.floor(Math.random() * 50) + 3
-          correctAnswer = Math.floor(num1 / num2)
-        }
-        break
-      default:
-        num1 = 1
-        num2 = 1
-        correctAnswer = 2
+    // Configurar complexidade baseada no nível de dificuldade
+    const getComplexity = () => {
+      switch (difficultyLevel) {
+        case 1: return { count: 3, range: 10, decimals: false }
+        case 2: return { count: 4, range: 20, decimals: true }
+        case 3: return { count: 5, range: 50, decimals: true }
+        default: return { count: 3, range: 10, decimals: false }
+      }
     }
 
-    setCurrentQuestion({ num1, num2, operator: operator.symbol, answer: correctAnswer })
+    const complexity = getComplexity()
+
+    switch (mediaType.type) {
+      case 'aritmetica':
+        values = Array.from({length: complexity.count}, () => 
+          Math.floor(Math.random() * complexity.range) + 1
+        )
+        correctAnswer = values.reduce((a, b) => a + b, 0) / values.length
+        if (!complexity.decimals) correctAnswer = Math.round(correctAnswer)
+        questionText = `Média Aritmética de: ${values.join(', ')}`
+        explanation = `(${values.join(' + ')}) ÷ ${values.length} = ${correctAnswer}`
+        break
+
+      case 'geometrica':
+        values = Array.from({length: complexity.count}, () => 
+          Math.floor(Math.random() * (complexity.range/2)) + 1
+        )
+        const product = values.reduce((a, b) => a * b, 1)
+        correctAnswer = Math.pow(product, 1/values.length)
+        if (!complexity.decimals) correctAnswer = Math.round(correctAnswer)
+        else correctAnswer = Math.round(correctAnswer * 10) / 10
+        questionText = `Média Geométrica de: ${values.join(', ')}`
+        explanation = `∜(${values.join(' × ')}) = ∜${product} = ${correctAnswer}`
+        break
+
+      case 'harmonica':
+        values = Array.from({length: complexity.count}, () => 
+          Math.floor(Math.random() * complexity.range) + 1
+        )
+        const sumInverses = values.reduce((sum, val) => sum + (1/val), 0)
+        correctAnswer = values.length / sumInverses
+        if (!complexity.decimals) correctAnswer = Math.round(correctAnswer)
+        else correctAnswer = Math.round(correctAnswer * 10) / 10
+        questionText = `Média Harmônica de: ${values.join(', ')}`
+        explanation = `${values.length} ÷ (${values.map(v => `1/${v}`).join(' + ')}) = ${correctAnswer}`
+        break
+
+      case 'ponderada':
+        values = Array.from({length: complexity.count}, () => 
+          Math.floor(Math.random() * complexity.range) + 1
+        )
+        weights = Array.from({length: complexity.count}, () => 
+          Math.floor(Math.random() * 5) + 1
+        )
+        const weightedSum = values.reduce((sum, val, i) => sum + (val * weights[i]), 0)
+        const totalWeight = weights.reduce((a, b) => a + b, 0)
+        correctAnswer = weightedSum / totalWeight
+        if (!complexity.decimals) correctAnswer = Math.round(correctAnswer)
+        else correctAnswer = Math.round(correctAnswer * 10) / 10
+        questionText = `Média Ponderada: Valores: ${values.join(', ')} | Pesos: ${weights.join(', ')}`
+        explanation = `(${values.map((v, i) => `${v}×${weights[i]}`).join(' + ')}) ÷ ${totalWeight} = ${correctAnswer}`
+        break
+
+      default:
+        values = [1, 2, 3]
+        correctAnswer = 2
+        questionText = 'Erro na geração'
+        explanation = 'Erro'
+    }
+
+    setCurrentQuestion({ 
+      values, 
+      weights, 
+      mediaType: mediaType.symbol, 
+      mediaName: mediaType.name,
+      answer: correctAnswer,
+      questionText,
+      explanation,
+      difficulty: difficultyLevel
+    })
     setUserAnswer('')
     setFeedback('')
     setIsCorrect(null)
@@ -117,25 +186,32 @@ const DesafioContas = () => {
 
   // Verificar resposta
   const checkAnswer = () => {
-    const userNum = parseInt(userAnswer)
-    const correct = userNum === currentQuestion.answer
+    const userNum = parseFloat(userAnswer)
+    const tolerance = currentQuestion.difficulty === 3 ? 0.2 : 0.1
+    const correct = Math.abs(userNum - currentQuestion.answer) <= tolerance
     
     setQuestionsAnswered(prev => prev + 1)
     
     if (correct) {
-      setScore(prev => prev + 1)
+      const points = difficultyLevels[difficultyLevel - 1].timeBonus
+      setScore(prev => prev + points)
       setCorrectAnswers(prev => prev + 1)
-      setFeedback('Correto! 🎉')
+      setFeedback(`Correto! 🎉 (+${points} pontos)`)
       setIsCorrect(true)
     } else {
       setFeedback(`Errou! A resposta era ${currentQuestion.answer}`)
       setIsCorrect(false)
     }
 
-    // Gerar nova pergunta após 1 segundo
+    // Mostrar explicação
+    setTimeout(() => {
+      setFeedback(prev => prev + `\n💡 ${currentQuestion.explanation}`)
+    }, 500)
+
+    // Gerar nova pergunta após 2 segundos
     setTimeout(() => {
       generateQuestion()
-    }, 1000)
+    }, 2000)
   }
 
   // Finalizar jogo
@@ -172,17 +248,18 @@ const DesafioContas = () => {
     setIsCorrect(null)
   }
 
-  // Mensagem de incentivo baseada na pontuação HARDCORE
+  // Mensagem de incentivo baseada na pontuação de MÉDIAS
   const getEncouragementMessage = () => {
     const accuracy = questionsAnswered > 0 ? (correctAnswers / questionsAnswered) * 100 : 0
     
-    if (score >= 25) return "🏆 LENDÁRIO! Você dominou o modo HARDCORE!"
-    if (score >= 20) return "🔥 IMPRESSIONANTE! Matemática de elite!"
-    if (score >= 15) return "⚡ EXCELENTE! Velocidade e precisão!"
-    if (score >= 10) return "💪 FORTE! Resistiu ao desafio HARDCORE!"
-    if (score >= 5) return "🎯 BOM COMEÇO! Continue treinando!"
-    if (accuracy >= 80) return "🎪 PRECISÃO CIRÚRGICA! Poucos erros!"
-    return "🚀 HARDCORE é difícil mesmo! Tente novamente!"
+    if (score >= 30) return "🏆 MESTRE DAS MÉDIAS! Você dominou todos os tipos!"
+    if (score >= 25) return "🔥 IMPRESSIONANTE! Expert em cálculos estatísticos!"
+    if (score >= 20) return "⚡ EXCELENTE! Suas médias estão acima da média!"
+    if (score >= 15) return "💪 MUITO BOM! Você entende bem de médias!"
+    if (score >= 10) return "🎯 BOM TRABALHO! Continue praticando!"
+    if (score >= 5) return "📊 COMEÇANDO BEM! As médias estão melhorando!"
+    if (accuracy >= 80) return "🎪 PRECISÃO MATEMÁTICA! Poucos erros!"
+    return "📈 Continue tentando! As médias vão melhorar!"
   }
 
   // Enviar resposta com Enter
@@ -198,14 +275,14 @@ const DesafioContas = () => {
         
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="text-6xl mb-6">🧮</div>
+          <div className="text-6xl mb-6">📊</div>
           <h1 className="section-title mb-6">
-            Desafio das <span className="gradient-text">Contas HARDCORE</span>
+            Desafio das <span className="gradient-text">Médias Matemáticas</span>
           </h1>
           <div className="w-24 h-0.5 bg-gray-900 dark:bg-white mx-auto mb-8"></div>
           <p className="text-xl md:text-2xl font-extralight text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
-            Desafio matemático extremo! Operações complexas, números grandes e apenas 90 segundos. 
-            Apenas os mais habilidosos conseguem pontuações altas.
+            Teste seus conhecimentos em médias! Aritmética, geométrica, harmônica e ponderada. 
+            3 níveis de dificuldade e apenas 90 segundos. Seja o mestre das médias!
           </p>
         </div>
 
@@ -218,28 +295,65 @@ const DesafioContas = () => {
             {gameState === 'menu' && (
               <div className="card text-center">
                 <div className="mb-8">
-                  <Target className="h-16 w-16 text-red-600 mx-auto mb-4" />
+                  <Target className="h-16 w-16 text-purple-600 mx-auto mb-4" />
                   <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-                    Pronto para o Desafio HARDCORE?
+                    Pronto para o Desafio das Médias?
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400 mb-6 font-light">
-                    90 segundos de matemática extrema! Números grandes, operações complexas. 
-                    Apenas os mais rápidos e precisos conseguem altas pontuações.
+                    90 segundos de cálculos de médias! Aritmética, geométrica, harmônica e ponderada. 
+                    Escolha sua dificuldade e teste seus conhecimentos estatísticos!
                   </p>
                 </div>
 
-                <div className="mb-8">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Seu Nome:
-                  </label>
-                  <input
-                    type="text"
-                    value={playerName}
-                    onChange={(e) => setPlayerName(e.target.value)}
-                    placeholder="Digite seu nome..."
-                    className="w-full max-w-sm mx-auto px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    onKeyPress={(e) => e.key === 'Enter' && startGame()}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Seu Nome:
+                    </label>
+                    <input
+                      type="text"
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value)}
+                      placeholder="Digite seu nome..."
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      onKeyPress={(e) => e.key === 'Enter' && startGame()}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Nível de Dificuldade:
+                    </label>
+                    <select
+                      value={difficultyLevel}
+                      onChange={(e) => setDifficultyLevel(parseInt(e.target.value))}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      {difficultyLevels.map(level => (
+                        <option key={level.level} value={level.level}>
+                          {level.name} (+{level.timeBonus} pts por acerto)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                      Tipos de Médias no Desafio:
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      {mediaTypes.map(type => (
+                        <div key={type.type} className="flex items-center gap-2">
+                          <span className="font-mono bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-xs">
+                            {type.symbol}
+                          </span>
+                          <span>{type.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 <button
@@ -247,7 +361,7 @@ const DesafioContas = () => {
                   className="btn-primary inline-flex items-center gap-2"
                 >
                   <Play className="h-5 w-5" />
-                  Começar Desafio HARDCORE!
+                  Começar Desafio das Médias!
                 </button>
               </div>
             )}
@@ -272,13 +386,23 @@ const DesafioContas = () => {
 
                 {/* Pergunta */}
                 <div className="text-center mb-8">
-                  <div className="text-6xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6">
-                    {currentQuestion.num1} {currentQuestion.operator} {currentQuestion.num2} = ?
+                  <div className="mb-4">
+                    <span className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${
+                      difficultyLevel === 1 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                      difficultyLevel === 2 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                      'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                    }`}>
+                      {currentQuestion.mediaName} - {difficultyLevels[difficultyLevel - 1].name}
+                    </span>
+                  </div>
+                  
+                  <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+                    {currentQuestion.questionText}
                   </div>
                   
                   {/* Feedback */}
                   {feedback && (
-                    <div className={`text-xl font-semibold mb-4 ${isCorrect ? 'text-green-600' : 'text-red-500'}`}>
+                    <div className={`text-lg font-semibold mb-4 whitespace-pre-line ${isCorrect ? 'text-green-600' : 'text-red-500'}`}>
                       {feedback}
                     </div>
                   )}
@@ -289,11 +413,12 @@ const DesafioContas = () => {
                   <input
                     ref={inputRef}
                     type="number"
+                    step="0.1"
                     value={userAnswer}
                     onChange={(e) => setUserAnswer(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Sua resposta..."
-                    className="w-full sm:w-48 px-4 py-3 text-xl text-center border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Digite a média..."
+                    className="w-full sm:w-48 px-4 py-3 text-xl text-center border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   <button
                     onClick={checkAnswer}
